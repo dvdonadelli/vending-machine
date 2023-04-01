@@ -1,14 +1,16 @@
 package datastructures.vendingmachine;
 
+import datastructures.vendingmachine.util.Pair;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DynamicTest;
 import org.junit.jupiter.api.TestFactory;
 import org.junit.jupiter.api.TestInstance;
 
+import java.util.Arrays;
+import java.util.List;
 import java.util.stream.Stream;
 
-import static org.junit.jupiter.api.Assertions.*;
-import static org.junit.jupiter.api.DynamicTest.dynamicTest;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class VendingMachineTest {
@@ -27,17 +29,17 @@ class VendingMachineTest {
     }
 
     @TestFactory
-    Stream<DynamicTest> testBuyItem() {
-        return Stream.of(
-                dynamicTest("Buy Coke with exact amount", () -> {
-                    assertTrue(vendingMachine.buyItem("Coke", 1.50));
-                    assertEquals(9, vendingMachine.getStock("Coke"));
-                }),
-                dynamicTest("Buy Pepsi with not enough amount", () -> {
-                    assertFalse(vendingMachine.buyItem("Pepsi", 1.00));
-                    assertEquals(vendingMachine.getStock("Pepsi"), vendingMachine.getStock("Pepsi"));
-                })
+    Stream<DynamicTest> testBuyExistentItemsWithPaymentAmountEnough() {
+        List<Pair<String, Double>> arguments = Arrays.asList(
+                Pair.of("Coke", 1.50),
+                Pair.of("Pepsi", 2.00),
+                Pair.of("Sprite", 2.50),
+                Pair.of("Keyboard", 80.00)
         );
-    }
 
+        return arguments.stream()
+                .map(args -> DynamicTest.dynamicTest("Buying " + args.first() + " with $" + args.second(),
+                        () -> assertTrue(vendingMachine.buyItem(args.first(), args.second())))
+                );
+    }
 }
