@@ -8,8 +8,10 @@ import org.junit.jupiter.api.TestInstance;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Random;
 import java.util.stream.Stream;
 
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
@@ -40,6 +42,37 @@ class VendingMachineTest {
         return arguments.stream()
                 .map(args -> DynamicTest.dynamicTest("Buying " + args.first() + " with $" + args.second(),
                         () -> assertTrue(vendingMachine.buyItem(args.first(), args.second())))
+                );
+    }
+
+    @TestFactory
+    Stream<DynamicTest> testBuyExistentItemsWithNotEnoughPayment() {
+        List<Pair<String, Double>> arguments = Arrays.asList(
+                Pair.of("Coke", 1.25),
+                Pair.of("Pepsi", 1.98),
+                Pair.of("Sprite", 1.99),
+                Pair.of("Keyboard", 15.00)
+        );
+
+        return arguments.stream()
+                .map(args -> DynamicTest.dynamicTest("Buying " + args.first() + " with $" + args.second(),
+                        () -> assertFalse(vendingMachine.buyItem(args.first(), args.second())))
+                );
+    }
+
+    @TestFactory
+    Stream<DynamicTest> testBuyInexistentItemsWithRandomPaymentAmount() {
+        Random random = new Random();
+        List<Pair<String, Double>> arguments = Arrays.asList(
+                Pair.of("Dolly", random.nextDouble()),
+                Pair.of("Guarana", random.nextDouble()),
+                Pair.of("iPhone", random.nextDouble()),
+                Pair.of("Mouse", random.nextDouble())
+        );
+
+        return arguments.stream()
+                .map(args -> DynamicTest.dynamicTest("Buying " + args.first() + " with $" + args.second(),
+                        () -> assertFalse(vendingMachine.buyItem(args.first(), args.second())))
                 );
     }
 }
