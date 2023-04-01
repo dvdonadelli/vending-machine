@@ -1,10 +1,7 @@
 package datastructures.vendingmachine;
 
 import datastructures.vendingmachine.util.Pair;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.DynamicTest;
-import org.junit.jupiter.api.TestFactory;
-import org.junit.jupiter.api.TestInstance;
+import org.junit.jupiter.api.*;
 
 import java.util.Arrays;
 import java.util.List;
@@ -26,6 +23,9 @@ class VendingMachineTest {
                 .addProduct("Pepsi", 5, 2.00)
                 .addProduct("Sprite", 7, 2.25)
                 .addProduct("Keyboard", 3, 80.00)
+                .addProduct("Laptop", 0, 500.00)
+                .addProduct("Pen", 1, 0.10)
+                .addProduct("Coin", 2, 0.00)
                 .build();
 
     }
@@ -36,7 +36,8 @@ class VendingMachineTest {
                 Pair.of("Coke", 1.50),
                 Pair.of("Pepsi", 2.00),
                 Pair.of("Sprite", 2.50),
-                Pair.of("Keyboard", 80.00)
+                Pair.of("Keyboard", 80.00),
+                Pair.of("Coin", 100.00)
         );
 
         return arguments.stream()
@@ -51,7 +52,8 @@ class VendingMachineTest {
                 Pair.of("Coke", 1.25),
                 Pair.of("Pepsi", 1.98),
                 Pair.of("Sprite", 1.99),
-                Pair.of("Keyboard", 15.00)
+                Pair.of("Keyboard", 15.00),
+                Pair.of("Coin", -0.01)
         );
 
         return arguments.stream()
@@ -74,5 +76,11 @@ class VendingMachineTest {
                 .map(args -> DynamicTest.dynamicTest("Buying " + args.first() + " with $" + args.second(),
                         () -> assertFalse(vendingMachine.buyItem(args.first(), args.second())))
                 );
+    }
+
+    @Test
+    void testBuySameItemTwice() {
+        assertTrue(vendingMachine.buyItem("Pen", 0.11));
+        assertFalse(vendingMachine.buyItem("Pen", 0.11));
     }
 }
